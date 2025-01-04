@@ -3,17 +3,16 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         System.out.println("Welcome to Address Book!");
-
         AddressBook a1 = new AddressBook();
         Scanner sc = new Scanner(System.in);
-
-        int isExit = 1;
+        int is_Exit = 1;
         do {
             System.out.println("""
                 Enter 1 to create contact
                 Enter 2 to display all contacts
                 Enter 3 to edit an existing contact
-                Enter 4 to delete a contact""");
+                Enter 4 to delete a contact
+                Enter 5 to add multiple contacts""");
             int choice = sc.nextInt();
             switch (choice) {
                 case 1 -> createContact(a1);
@@ -28,13 +27,14 @@ public class Main {
                     String firstName = sc.next();
                     a1.deleteContact(firstName);
                 }
+                case 5 -> addMultipleContacts(a1);
                 default -> System.out.println("Wrong input");
             }
 
             System.out.println("Enter 0 to exit");
-            isExit = sc.nextInt();
+            is_Exit = sc.nextInt();
             System.out.println("Exiting from Address Book...");
-        } while (isExit != 0);
+        } while (is_Exit != 0);
 
         System.out.println("Thank you for using Address Book.");
         sc.close();
@@ -58,5 +58,17 @@ public class Main {
         int zip = sc.nextInt();
         Contact c1 = new Contact(firstName, lastName, city, state, email, phone, zip);
         a1.addContact(c1);
+    }
+
+    static void addMultipleContacts(AddressBook a1) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("How many contacts do you want to add?");
+        int numberOfContacts = sc.nextInt();
+
+        for (int i = 0; i < numberOfContacts; i++) {
+            System.out.println("Adding contact " + (i + 1));
+            createContact(a1);
+        }
+        System.out.println(numberOfContacts + " contacts added successfully!");
     }
 }
