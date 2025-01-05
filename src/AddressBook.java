@@ -1,49 +1,97 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-public class AddressBook {
+class AddressBook {
+    private List<Contact> contacts = new ArrayList<>();
 
-    List<Contact> addressesBk = new ArrayList<>();
+    // UC1: Add a contact
+//    public void addContact(Contact contact) {
+//        contacts.add(contact);
+//    }
 
-    public void addContact(Contact c1) {
-        addressesBk.add(c1);
-        System.out.println("Contact is added.");
-    }
-
-    public void display() {
-        System.out.println(addressesBk);
-    }
-
-    public List<Contact> getContacts() {
-        return addressesBk;
-    }
-
-    public void editContact(String firstName) {
-        for (Contact c : addressesBk) {
-            if (c.firstName.equalsIgnoreCase(firstName)) {
-                Scanner sc = new Scanner(System.in);
-                System.out.println("Enter new last name:");
-                c.lastName = sc.next();
-                System.out.println("Enter new city:");
-                c.city = sc.next();
-                System.out.println("Enter new state:");
-                c.state = sc.next();
-                System.out.println("Enter new email:");
-                c.email = sc.next();
-                System.out.println("Enter new phone number:");
-                c.phone = sc.nextInt();
-                System.out.println("Enter new zip:");
-                c.zip = sc.nextInt();
-                System.out.println("Contact details updated successfully.");
+    // UC2: Edit an existing contact
+    public void editContact(String firstName, String lastName, Contact updatedContact) {
+        for (Contact contact : contacts) {
+            if (contact.getFirstName().equals(firstName) && contact.getLastName().equals(lastName)) {
+                contact.setAddress(updatedContact.getAddress());
+                contact.setCity(updatedContact.getCity());
+                contact.setState(updatedContact.getState());
+                contact.setZip(updatedContact.getZip());
+                contact.setPhoneNumber(updatedContact.getPhoneNumber());
+                contact.setEmail(updatedContact.getEmail());
                 return;
             }
         }
-        System.out.println("No contact found with the given name.");
+        System.out.println("Contact not found.");
     }
 
-    public void deleteContact(String firstName) {
-        addressesBk.removeIf(c -> c.firstName.equalsIgnoreCase(firstName));
-        System.out.println("Contact deleted successfully.");
+    // UC3: Delete a contact
+    public void deleteContact(String firstName, String lastName) {
+        contacts.removeIf(contact -> contact.getFirstName().equals(firstName) && contact.getLastName().equals(lastName));
+    }
+    // UC4: Add multiple contacts (Batch addition)
+    public void addMultipleContacts(List<Contact> newContacts) {
+        contacts.addAll(newContacts);
+    }
+
+
+    // UC5: Search contacts by city or state
+//    public List<Contact> searchByCityOrState(String location) {
+//        List<Contact> result = new ArrayList<>();
+//        for (Contact contact : contacts) {
+//            if (contact.getCity().equalsIgnoreCase(location) || contact.getState().equalsIgnoreCase(location)) {
+//                result.add(contact);
+//            }
+//        }
+//        return result;
+//    }
+
+
+    // UC6: View contacts by city or state
+    public Map<String, List<Contact>> viewContactsByCityOrState() {
+        Map<String, List<Contact>> locationMap = new HashMap<>();
+        for (Contact contact : contacts) {
+            locationMap.computeIfAbsent(contact.getCity(), k -> new ArrayList<>()).add(contact);
+            locationMap.computeIfAbsent(contact.getState(), k -> new ArrayList<>()).add(contact);
+        }
+        return locationMap;
+    }
+    // UC7: Ensure no duplicate entries
+    public void addContact(Contact contact) {
+        boolean isDuplicate = contacts.stream()
+                .anyMatch(existingContact -> existingContact.getFirstName().equals(contact.getFirstName()) &&
+                        existingContact.getLastName().equals(contact.getLastName()));
+        if (!isDuplicate) {
+            contacts.add(contact);
+        } else {
+            System.out.println("Duplicate contact found. Cannot add.");
+        }
+    }
+    // UC8: Search persons by city or state
+    public List<Contact> searchByCityOrState(String cityOrState) {
+        return contacts.stream()
+                .filter(contact -> contact.getCity().equalsIgnoreCase(cityOrState) ||
+                        contact.getState().equalsIgnoreCase(cityOrState))
+                .toList();
+    }
+
+    // UC9: View persons by city or state
+    public Map<String, List<Contact>> viewByCityOrState() {
+        Map<String, List<Contact>> cityStateMap = new HashMap<>();
+        contacts.forEach(contact -> {
+            String key = contact.getCity() + ", " + contact.getState();
+            cityStateMap.computeIfAbsent(key, k -> new ArrayList<>()).add(contact);
+        });
+        return cityStateMap;
+    }
+
+    // Display all contacts
+    public void displayContacts() {
+        for (Contact contact : contacts) {
+            System.out.println(contact);
+        }
     }
 }
