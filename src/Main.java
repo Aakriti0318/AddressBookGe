@@ -49,11 +49,5 @@ public class Main {
             System.out.println(key + " -> " + value);
         });
 
-        // UC10: Count by city and state
-        System.out.println("\nCount by City and State:");
-        Map<String, Long> countResults = addressBook.countByCityOrState();
-        countResults.forEach((key, value) -> {
-            System.out.println(key + " -> " + value);
-        });
     }
 }
